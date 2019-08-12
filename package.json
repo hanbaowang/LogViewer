@@ -1,0 +1,23 @@
+{
+  "name": "logviewer",
+  "version": "0.1.0",
+  "description": "a web log viewer application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hanbaowang/LogViewer.git"
+  },
+  "keywords": [
+    "log",
+    "viewer"
+  ],
+  "author": "xiaoluo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hanbaowang/LogViewer/issues"
+  },
+  "homepage": "https://github.com/hanbaowang/LogViewer#readme"
+}
