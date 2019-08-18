@@ -1,6 +1,6 @@
 
-# Created by https://www.gitignore.io/api/go,node
-# Edit at https://www.gitignore.io/?templates=go,node
+# Created by https://www.gitignore.io/api/go,node,visualstudiocode
+# Edit at https://www.gitignore.io/?templates=go,node,visualstudiocode
 
 ### Go ###
 # Binaries for programs and plugins
@@ -113,4 +113,15 @@ typings/
 # DynamoDB Local files
 .dynamodb/
 
-# End of https://www.gitignore.io/api/go,node
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history
+
+# End of https://www.gitignore.io/api/go,node,visualstudiocode
