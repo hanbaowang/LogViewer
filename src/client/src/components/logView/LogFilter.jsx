@@ -1,32 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 import { Input } from "antd";
 import { DatePicker } from "antd";
-import moment from "moment";
-
 import LogLevelFilter from "./logLevelFilter";
+import { dateFormatter } from "../../config/DefaultConfig";
 
 const { Search } = Input;
 const { RangePicker } = DatePicker;
-
-const dateFormatter = "YYYY-MM-DD hh:mm";
-
-function logLevelChange(level) {
-  console.log(level);
-}
-
-function doSearch(value) {
-  // alert(value)
-}
-
 /**
- * props.level
- * props.timeRange [default: [minTimestamp, maxTimestamp]]
+ *
+ * @param {*} props
  */
 export default function LogFilter(props) {
-  const [keyword, setKeyword] = useState("");
-  const [startTime, setStartTime] = useState(props.config.timeRange[0]);
-  const [endTime, setEndTime] = useState(props.config.timeRange[1]);
-
   return (
     <div
       style={{
@@ -38,23 +22,20 @@ export default function LogFilter(props) {
       <Search
         placeholder="请输入关键词..."
         enterButton="Search"
-        onSearch={value => {
-          doSearch(value);
-        }}
+        onSearch={props.onChange.bind(this, "search")}
         style={{ margin: "0 0 10px 0px" }}
       />
       <RangePicker
         defaultValue={[
-          moment(startTime),
-          moment(endTime)
+          props.config.timeRange.startTime,
+          props.config.timeRange.endTime
         ]}
         format={dateFormatter}
+        onChange={props.onChange.bind(this, "timeRange")}
       />
       <LogLevelFilter
         level={props.config.level}
-        onClick={level => {
-          logLevelChange(level);
-        }}
+        onChange={props.onChange.bind(this, "level")}
       />
     </div>
   );

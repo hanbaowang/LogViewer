@@ -2,7 +2,7 @@ import "./App.css";
 import React from "react";
 import Menu from "antd/es/menu";
 import Layout from "antd/es/layout";
-import LogView from "./components/logView/LogView"
+import LogView from "./components/logView/LogViewer";
 
 const { Footer, Sider, Content } = Layout;
 const { Item } = Menu;
@@ -33,15 +33,20 @@ function App() {
           </Menu>
         </Sider>
         <Layout style={{ flexDirection: "column" }}>
-          <Content style={{ height: "calc( 100vh - 3.5rem)" ,backgroundColor:'white'}}>
-            <LogView/>
+          <Content
+            style={{
+              height: "calc( 100vh - 3.5rem)",
+              backgroundColor: "white"
+            }}
+          >
+            <LogView />
           </Content>
           <Footer
             style={{
               height: "3.5rem",
               verticalAlign: "middle",
               color: "rgb(172,172,172)",
-              backgroundColor:'white'
+              backgroundColor: "white"
             }}
           >
             LogAggr@{new Date().getFullYear()} Made By hanbaowang

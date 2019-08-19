@@ -1,7 +1,6 @@
-import axios from "axios";
-import { CascaderOptionType } from "antd/lib/cascader";
 import config from "../config/Config";
-import Ajax from "../utils/HttlUtils";
+import Ajax from "../axios/Ajax";
+import { URLS } from "../axios/config";
 
 export interface Service {
   name: string;
@@ -13,28 +12,9 @@ interface ServiceLog {
   log_path: string;
 }
 
-function trans2CascaderOptions(serviceRsps: Service[]): CascaderOptionType[] {
-  const options: CascaderOptionType[] = [];
-  serviceRsps.forEach(serviceRsp => {
-    const service: CascaderOptionType = {};
-    service.value = serviceRsp.name;
-    service.label = serviceRsp.name;
-    service.children = [];
-    for (let log of serviceRsp.logs) {
-      service.children.push({
-        value: log.log_name,
-        label: log.log_path
-      });
-    }
-    options.push(service);
-  });
-
-  return options;
-}
-
 export default async function getServices() {
-  let services: CascaderOptionType[] = await Ajax.get<Service[]>("/services")
-    .then(resp => trans2CascaderOptions(resp.data))
-    .catch(() => trans2CascaderOptions(config.getServicesResp));
+  let services: Service[] = await Ajax.get<Service[]>(URLS.SERVICES)
+    .then(resp => resp.data)
+    .catch(resp => config.getServicesResp);
   return services;
 }

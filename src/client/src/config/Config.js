@@ -4,7 +4,7 @@ const config = {
   },
   getServicesResp: [
     {
-      name: "TestWebsite1",
+      name: "TestService1",
       logs: [
         {
           log_name: "root.log",
@@ -17,7 +17,7 @@ const config = {
       ]
     },
     {
-      name: "TestWebsite2",
+      name: "TestService2",
       logs: [
         {
           log_name: "tomcat.log",

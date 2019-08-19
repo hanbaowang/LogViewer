@@ -1,4 +1,4 @@
-# LogAggrWebsite
+# LogViewer Website
 
 ## Available Scripts
 

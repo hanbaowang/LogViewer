@@ -2,24 +2,33 @@ import React, { useState, useEffect } from "react";
 import { Cascader } from "antd";
 import getServices from "../../services/ServicesLoader";
 
-export default function LogSelector(props) {
-  const [curLog, setCurLog] = useState("");
-  const [services, setServices] = useState([]);
+function filter(inputValue, path) {
+  return path.some(
+    option => option.label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1
+  );
+}
 
-  useEffect(() => {
-    async function fetchData() {
-      const resp = await getServices();
-      setServices(resp)
+function trans2CascaderOptions(serviceRsps) {
+  const options = [];
+  serviceRsps.forEach(serviceRsp => {
+    const service = {};
+    service.value = serviceRsp.name;
+    service.label = serviceRsp.name;
+    service.children = [];
+    for (let log of serviceRsp.logs) {
+      service.children.push({
+        value: log.log_name,
+        label: log.log_path
+      });
     }
-    fetchData()
-  },[]);
+    options.push(service);
+  });
 
-  function filter(inputValue, path) {
-    return path.some(
-      option =>
-        option.label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1
-    );
-  }
+  return options;
+}
+
+export default function LogSelector(props) {
+  const serviceOptions = trans2CascaderOptions(props.config);
 
   return (
     <div
@@ -32,8 +41,8 @@ export default function LogSelector(props) {
       <span>日志配置：&nbsp;&nbsp;</span>
       <Cascader
         size="default"
-        options={services}
-        onChange={props.LogSelectoronChange}
+        options={serviceOptions}
+        onChange={props.onChange.bind(this,'select')}
         placeholder="请选择日志..."
         showSearch={{ filter }}
         style={{ width: "500px" }}
