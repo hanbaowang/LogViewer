@@ -44,16 +44,18 @@ func getLog(c echo.Context) (err error) {
 }
 
 func getServices(c echo.Context) (err error) {
-	var services []*Service
-	service := new(Service)
-	services = append(services, service)
+	reader := &FileReader{
+		fileName: "../../demo/service.json",
+	}
+
+	services := reader.ReadServices()
 
 	return c.JSON(http.StatusOK, services)
 }
 
 func getConfig(c echo.Context) (err error) {
 	reader := &FileReader{
-		fileName: "config.json",
+		fileName: "../../demo/config.json",
 	}
 	return c.JSON(http.StatusOK, reader.ReadConfig())
 }

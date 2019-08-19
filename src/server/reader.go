@@ -20,6 +20,11 @@ type ConfigReader interface {
 	ReadConfig() *Config
 }
 
+// ServiceReader Service Reader
+type ServiceReader interface {
+	ReadService() *Service
+}
+
 // FileReader File Reader
 type FileReader struct {
 	fileName string
@@ -56,6 +61,22 @@ func (fr *FileReader) ReadConfig() *Config {
 	}
 
 	return config
+}
+
+// ReadServices Read Services
+func (fr *FileReader) ReadServices() []*Service {
+	serviceByte, err := ioutil.ReadFile(fr.fileName)
+	if err != nil {
+		log.Print(err)
+	}
+
+	var services []*Service
+	json.Unmarshal(serviceByte, &services)
+	if err != nil {
+		log.Print("Unmarshal config err, ", err)
+	}
+
+	return services
 }
 
 func readLine(r *bufio.Reader) (string, error) {
