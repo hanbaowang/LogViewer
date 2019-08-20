@@ -32,8 +32,8 @@ const config = {
   ],
   logs: [
     {
-      value: "TestWebsite1",
-      label: "TestWebsite1",
+      value: "TestService1",
+      label: "TestService1",
       children: [
         {
           value: "log/root.log",
@@ -46,8 +46,8 @@ const config = {
       ]
     },
     {
-      value: "TestWebsite2",
-      label: "TestWebsite2",
+      value: "TestService2",
+      label: "TestService2",
       children: [
         {
           value: "tomcat/tomcat.log",
