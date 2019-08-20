@@ -70,7 +70,7 @@ func updateConfig(c echo.Context) (err error) {
 	}
 
 	cw := new(ConfigWriter)
-	cw.fileName = "config.json"
+	cw.fileName = "../../demo/config.json"
 	err = cw.Write(cfg)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

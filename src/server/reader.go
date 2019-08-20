@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -90,10 +91,15 @@ func readLine(r *bufio.Reader) (string, error) {
 }
 
 func recordify(line string) *Record {
-	log.Print(line)
+	lineSlice := strings.SplitN(line, " ", 4)
+	date, err := time.Parse("2006-01-02 15:04:05", lineSlice[0]+" "+lineSlice[1])
+	if err != nil {
+		log.Print("parse time error, ", err)
+		return nil
+	}
 	return &Record{
-		Timestamp: strconv.FormatInt(time.Now().UnixNano(), 10),
-		Level:     "WARN",
-		Content:   "test",
+		Timestamp: strconv.FormatInt(date.Unix()*1000, 10),
+		Level:     lineSlice[2],
+		Content:   strings.Trim(lineSlice[3], " "),
 	}
 }
