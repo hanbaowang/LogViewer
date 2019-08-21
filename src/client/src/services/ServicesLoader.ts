@@ -1,6 +1,7 @@
+import { URLS } from "../axios/config";
+import { Service } from "../type/log";
 import config from "../config/Config";
 import Ajax from "../axios/Ajax";
-import { URLS } from "../axios/config";
 
 export interface Service {
   name: string;

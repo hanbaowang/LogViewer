@@ -1,8 +1,5 @@
+import { LogConfig } from "../type/config";
 import defaultConfig from "../config/DefaultConfig";
-
-interface LogConfig {
-  refresh_time: number;
-}
 
 export default class LogConfigLoader {
   private _config: LogConfig;

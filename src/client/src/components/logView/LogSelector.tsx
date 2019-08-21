@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Cascader } from "antd";
-import getServices from "../../services/ServicesLoader";
+import { Service } from "../../type/log";
+import { CascaderOptionType } from "antd/lib/cascader";
 
-function filter(inputValue, path) {
-  return path.some(
-    option => option.label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1
-  );
-}
-
-function trans2CascaderOptions(serviceRsps) {
-  const options = [];
+function trans2CascaderOptions(serviceRsps: Service[]): CascaderOptionType[] {
+  const options: CascaderOptionType[] = [];
   serviceRsps.forEach(serviceRsp => {
-    const service = {};
+    const service: CascaderOptionType = {};
     service.value = serviceRsp.name;
     service.label = serviceRsp.name;
     service.children = [];
@@ -27,7 +22,7 @@ function trans2CascaderOptions(serviceRsps) {
   return options;
 }
 
-export default function LogSelector(props) {
+export default function LogSelector(props: any) {
   const serviceOptions = trans2CascaderOptions(props.config);
 
   return (
@@ -42,9 +37,9 @@ export default function LogSelector(props) {
       <Cascader
         size="default"
         options={serviceOptions}
-        onChange={props.onChange.bind(this,'select')}
+        onChange={props.onChange}
         placeholder="请选择日志..."
-        showSearch={{ filter }}
+        showSearch={true}
         style={{ width: "500px" }}
       />
     </div>

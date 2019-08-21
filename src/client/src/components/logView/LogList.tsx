@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { Table } from "antd";
 
-export default function LogList(props) {
-  const [logs, setLogs] = useState([]);
+export default function LogList(props: any) {
 
   const columns = [
     {

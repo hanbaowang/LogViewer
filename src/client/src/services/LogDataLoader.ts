@@ -1,7 +1,6 @@
-import config from "../config/Config";
-import Ajax from "../axios/Ajax";
 import { URLS } from "../axios/config";
-import { LogLevel } from "./LogManager";
+import { LogsReqParams, LogData, LogLevel } from "../type/log";
+import Ajax from "../axios/Ajax";
 
 export interface LogData {
   timestamp: number;

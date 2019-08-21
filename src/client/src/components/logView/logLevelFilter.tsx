@@ -2,7 +2,7 @@ import React from "react";
 import { Radio, Button } from "antd";
 import { LogLevel } from "../../services/LogManager";
 
-export default function LogLevelFilter(props) {
+export default function LogLevelFilter(props: any) {
   return (
     <div
       style={{

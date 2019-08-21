@@ -49,7 +49,7 @@ function App() {
               backgroundColor: "white"
             }}
           >
-            LogAggr@{new Date().getFullYear()} Made By hanbaowang
+            LogViewer @{new Date().getFullYear()} Made By Hanbaowang
           </Footer>
         </Layout>
       </Layout>
