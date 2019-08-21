@@ -1,7 +1,5 @@
-import { Moment } from "moment";
-import { LogFilters } from "../type/config";
-import { Service, LogData, LogLevel } from "../type/log";
-import { dateFormatter } from "../config/DefaultConfig";
+import { LogFilters } from "../type/Config";
+import { Service, LogData, LogLevel, TimeRange } from "../type/Log";
 import getServices from "./ServicesLoader";
 import getLogData from "./LogDataLoader";
 
@@ -12,6 +10,8 @@ export default class LogManager {
     timeRange: {},
     logData: []
   };
+
+  // private _logDataOrigin: LogData[] = [];
 
   get services(): Service[] {
     return this._logFilters.services;
@@ -39,10 +39,14 @@ export default class LogManager {
     this._logFilters.level = value;
   }
 
+  get timeRange(): TimeRange {
+    return this._logFilters.timeRange;
+  }
+
   // TODO format is not correct here
-  set timeRange(range: [Moment, Moment]) {
-    this._logFilters.timeRange.startTime = range[0].format(dateFormatter);
-    this._logFilters.timeRange.endTime = range[1].format(dateFormatter);
+  set timeRange(range: TimeRange) {
+    this._logFilters.timeRange.startTime = range.startTime;
+    this._logFilters.timeRange.endTime = range.endTime;
   }
 
   set keyword(value: string) {

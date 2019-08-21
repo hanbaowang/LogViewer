@@ -7,7 +7,6 @@ export enum LogLevel {
   ERROR = "ERROR",
   FATAL = "FATAL"
 }
-
 export interface Service {
   name: string;
   logs: ServiceLog[];
@@ -19,8 +18,8 @@ export interface ServiceLog {
 }
 
 export interface LogData {
-  timestamp: number;
-  level: LogLevel;
+  timestamp: string;
+  level: string;
   content: string;
 }
 
@@ -30,4 +29,16 @@ export interface LogsReqParams {
   start_time?: string;
   end_time?: string;
   contain?: string;
+}
+
+export interface TimeRange {
+  startTime?: string;
+  endTime?: string;
+}
+
+export interface LogListProps {
+  keyword: string;
+  timeRange: TimeRange;
+  level: string;
+  data: LogData[];
 }

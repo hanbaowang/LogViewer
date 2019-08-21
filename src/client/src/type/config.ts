@@ -1,9 +1,4 @@
-import { LogLevel, Service, LogData } from "./log";
-
-export interface TimeRange {
-  startTime?: string;
-  endTime?: string;
-}
+import { LogLevel, Service, LogData, TimeRange } from "./Log";
 
 export interface LogConfig {
   refresh_time: number;

@@ -1,4 +1,4 @@
-import { LogConfig } from "../type/config";
+import { LogConfig } from "../type/Config";
 import defaultConfig from "../config/DefaultConfig";
 
 export default class LogConfigLoader {

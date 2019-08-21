@@ -3,14 +3,14 @@ import moment from "moment";
 import { Input } from "antd";
 import { DatePicker } from "antd";
 
+import { dateFormatter } from "../../config/DefaultConfig";
+import { RangePickerValue } from "antd/lib/date-picker/interface";
+import { LogLevel } from "../../type/Log";
+import { isundefined } from "../../utils/common";
 import LogLevelFilter from "./logLevelFilter";
 import LogSelector from "./LogSelector";
 import LogList from "./LogList";
 import LogManager from "../../services/LogManager";
-import { dateFormatter } from "../../config/DefaultConfig";
-import { RangePickerValue } from "antd/lib/date-picker/interface";
-import { LogLevel } from "../../type/log";
-import { isundefined } from "../../utils/common";
 
 const { Search } = Input;
 const { RangePicker } = DatePicker;
@@ -37,25 +37,23 @@ export default class LogView extends React.Component {
   };
 
   onSearch = (keyword: string, event: any): void => {
-    console.log("=====search=====");
-    console.log(keyword);
-    console.log(event);
-    this.logManager.keyword = keyword
+    this.logManager.keyword = keyword;
+    this.setState(this.logManager.logFilters);
+
   };
 
   onTimeRangeChange = (
-    datas: RangePickerValue,
+    datas:any,
     timeRange: [string, string]
   ): void => {
-    console.log("=====time=====");
-    console.log(datas);
-    console.log(timeRange);
-    this.logManager.timeRange = [moment(timeRange[0]), moment(timeRange[1])];
+    this.logManager.timeRange = {
+      startTime: datas[0].valueOf().toString(),
+      endTime: datas[1].valueOf().toString()
+    };
+    this.setState(this.logManager.logFilters);
   };
 
   onLevelChange = (level: string): void => {
-    console.log("=====level=====");
-    console.log(level);
     const levels = [
       LogLevel.ALL,
       LogLevel.TRACE,
@@ -68,12 +66,9 @@ export default class LogView extends React.Component {
     const index = Object.keys(LogLevel).indexOf(level);
     this.logManager.level = levels[index < 0 ? 0 : index];
     this.setState(this.logManager.logFilters);
-    console.log(this.logManager)
   };
 
   onServiceChange = (service: [string, string]): void => {
-    console.log("=====service=====");
-    console.log(service);
     this.logManager
       .loadLogData(service[0], service[1])
       .then(() => {
@@ -88,11 +83,12 @@ export default class LogView extends React.Component {
     const { timeRange, level, services, logData } = this.logManager.logFilters;
     const { startTime, endTime } = timeRange;
     // TODO defaultTime 类型巨坑……
+    console.log(this.logManager.timeRange)
     let defaultTime;
     if (isundefined(startTime) || isundefined(endTime)) {
-      defaultTime = undefined
+      defaultTime = undefined;
     } else {
-      defaultTime = [moment(startTime), moment(endTime)]
+      defaultTime = [moment(startTime), moment(endTime)];
     }
 
     return (
@@ -137,7 +133,12 @@ export default class LogView extends React.Component {
             margin: "15px 0px"
           }}
         >
-          <LogList data={logData} />
+          <LogList
+            keyword={this.logManager.keyword}
+            timeRange={this.logManager.timeRange}
+            level={this.logManager.level}
+            data={logData}
+          />
         </div>
       </div>
     );

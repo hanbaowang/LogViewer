@@ -1,5 +1,5 @@
 import { URLS } from "../axios/config";
-import { Service } from "../type/log";
+import { Service } from "../type/Log";
 import config from "../config/Config";
 import Ajax from "../axios/Ajax";
 

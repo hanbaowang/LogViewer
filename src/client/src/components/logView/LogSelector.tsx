@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Cascader } from "antd";
-import { Service } from "../../type/log";
+import { Service } from "../../type/Log";
 import { CascaderOptionType } from "antd/lib/cascader";
 
 function trans2CascaderOptions(serviceRsps: Service[]): CascaderOptionType[] {

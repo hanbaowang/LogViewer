@@ -1,5 +1,5 @@
 import { URLS } from "../axios/config";
-import { LogsReqParams, LogData, LogLevel } from "../type/log";
+import { LogsReqParams, LogData } from "../type/Log";
 import Ajax from "../axios/Ajax";
 
 export default async function getLogData(params: LogsReqParams) {
@@ -9,9 +9,15 @@ export default async function getLogData(params: LogsReqParams) {
     .then(resp => resp.data)
     .catch(resp => [
       {
-        timestamp: 111,
-        level: LogLevel.INFO,
+        timestamp: Date.now().toString(),
+        level: "INFO",
         content: "hahaha"
+      },
+      {
+        timestamp: Date.now().toString(),
+        level: "ERROR",
+        content:
+          "TypeScript error in F:/01 repository/01 github/08 LogView/LogViewer/src/client/src/components/logView/LogSelector.tsx(3,25)TypeScript error in F:/01 repository/01 github/08 LogView/LogViewer/src/client/src/components/logView/LogSelector.tsx(3,25)"
       }
     ]);
   return logData;
