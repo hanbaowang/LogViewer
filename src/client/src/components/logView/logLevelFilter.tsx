@@ -1,6 +1,6 @@
 import React from "react";
 import { Radio, Button } from "antd";
-import { LogLevel } from "../../services/LogManager";
+import { LogLevel } from "../../type/log";
 
 export default function LogLevelFilter(props: any) {
   return (

@@ -3,15 +3,6 @@ import { Service } from "../type/log";
 import config from "../config/Config";
 import Ajax from "../axios/Ajax";
 
-export interface Service {
-  name: string;
-  logs: ServiceLog[];
-}
-
-interface ServiceLog {
-  log_name: string;
-  log_path: string;
-}
 
 export default async function getServices() {
   let services: Service[] = await Ajax.get<Service[]>(URLS.SERVICES)

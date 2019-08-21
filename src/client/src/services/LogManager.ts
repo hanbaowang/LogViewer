@@ -1,64 +1,56 @@
-import getServices, { Service } from "./ServicesLoader";
-import getLogData, { LogData } from "./LogDataLoader";
 import { Moment } from "moment";
+import { LogFilters } from "../type/config";
+import { Service, LogData, LogLevel } from "../type/log";
 import { dateFormatter } from "../config/DefaultConfig";
-
-interface LogFilter {
-  keyword: string;
-  timeRange: TimeRange;
-  level: LogLevel;
-}
-
-interface TimeRange {
-  startTime: string;
-  endTime: string;
-}
-
-export enum LogLevel {
-  ALL = 0,
-  TRACE = 1,
-  DEBUG = 2,
-  INFO = 3,
-  WARN = 4,
-  ERROR = 5,
-  FATAL = 6
-}
+import getServices from "./ServicesLoader";
+import getLogData from "./LogDataLoader";
 
 export default class LogManager {
-  private _logFilter: LogFilter = {
-    keyword: "",
-    timeRange: {
-      startTime: "",
-      endTime: ""
-    },
-    level: LogLevel.ALL
+  private _logFilters: LogFilters = {
+    level: LogLevel.ALL,
+    services: [],
+    timeRange: {},
+    logData: []
   };
-  private _services: Service[] = [];
-  private _logData: LogData[] = [];
-
-  get logFilter(): LogFilter {
-    return this._logFilter;
-  }
 
   get services(): Service[] {
-    return this._services;
+    return this._logFilters.services;
   }
 
   get logData(): LogData[] {
-    return this._logData;
+    return this._logFilters.logData;
+  }
+
+  get level(): LogLevel {
+    return this._logFilters.level;
+  }
+
+  get keyword(): string {
+    return typeof this._logFilters.keyword === "undefined"
+      ? ""
+      : this._logFilters.keyword;
+  }
+
+  get logFilters(): LogFilters {
+    return this._logFilters;
   }
 
   set level(value: LogLevel) {
-    this._logFilter.level = value;
+    this._logFilters.level = value;
   }
 
+  // TODO format is not correct here
   set timeRange(range: [Moment, Moment]) {
-    this._logFilter.timeRange.startTime = range[0].format(dateFormatter);
-    this._logFilter.timeRange.startTime = range[1].format(dateFormatter);
+    this._logFilters.timeRange.startTime = range[0].format(dateFormatter);
+    this._logFilters.timeRange.endTime = range[1].format(dateFormatter);
+  }
+
+  set keyword(value: string) {
+    this._logFilters.keyword = value;
   }
 
   loadServices = async (): Promise<void> => {
-    this._services = await getServices();
+    this._logFilters.services = await getServices();
   };
 
   /**
@@ -69,11 +61,11 @@ export default class LogManager {
     const params = {
       service,
       logs,
-      start_time: this._logFilter.timeRange.startTime,
-      end_time: this._logFilter.timeRange.endTime,
-      contain: this._logFilter.keyword
+      start_time: this._logFilters.timeRange.startTime,
+      end_time: this._logFilters.timeRange.endTime,
+      contain: this._logFilters.keyword
     };
-    this._logData = await getLogData(params);
+    this._logFilters.logData = await getLogData(params);
   };
 
   load = () => {
