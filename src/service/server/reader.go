@@ -23,18 +23,23 @@ type ConfigReader interface {
 
 // ServiceReader Service Reader
 type ServiceReader interface {
-	ReadService() *Service
+	ReadService() []*Service
+}
+
+// SrvReader Server Reader
+type SrvReader interface {
+	ReadServer() []*Server
 }
 
 // FileReader File Reader
 type FileReader struct {
-	fileName string
+	FileName string
 }
 
 // ReadLog Read Log
 func (fr *FileReader) ReadLog() (records []*Record) {
 
-	f, _ := os.Open(fr.fileName)
+	f, _ := os.Open(fr.FileName)
 	defer f.Close()
 	r := bufio.NewReader(f)
 	for {
@@ -50,7 +55,7 @@ func (fr *FileReader) ReadLog() (records []*Record) {
 
 // ReadConfig Read Config
 func (fr *FileReader) ReadConfig() *Config {
-	configByte, err := ioutil.ReadFile(fr.fileName)
+	configByte, err := ioutil.ReadFile(fr.FileName)
 	if err != nil {
 		log.Print(err)
 	}
@@ -66,7 +71,7 @@ func (fr *FileReader) ReadConfig() *Config {
 
 // ReadServices Read Services
 func (fr *FileReader) ReadServices() []*Service {
-	serviceByte, err := ioutil.ReadFile(fr.fileName)
+	serviceByte, err := ioutil.ReadFile(fr.FileName)
 	if err != nil {
 		log.Print(err)
 	}
@@ -78,6 +83,22 @@ func (fr *FileReader) ReadServices() []*Service {
 	}
 
 	return services
+}
+
+// ReadServer Read Server
+func (fr *FileReader) ReadServer() Servers {
+	serviceByte, err := ioutil.ReadFile(fr.FileName)
+	if err != nil {
+		log.Print(err)
+	}
+
+	var server Servers
+	json.Unmarshal(serviceByte, &server)
+	if err != nil {
+		log.Print("Unmarshal config err, ", err)
+	}
+
+	return server
 }
 
 func readLine(r *bufio.Reader) (string, error) {

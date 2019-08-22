@@ -36,7 +36,7 @@ func getLog(c echo.Context) (err error) {
 		fileName += req.Log
 	}
 	reader := &FileReader{
-		fileName: fileName,
+		FileName: fileName,
 	}
 
 	rs := reader.ReadLog()
@@ -45,7 +45,7 @@ func getLog(c echo.Context) (err error) {
 
 func getServices(c echo.Context) (err error) {
 	reader := &FileReader{
-		fileName: "../../demo/service.json",
+		FileName: "../../demo/service.json",
 	}
 
 	services := reader.ReadServices()
@@ -55,7 +55,7 @@ func getServices(c echo.Context) (err error) {
 
 func getConfig(c echo.Context) (err error) {
 	reader := &FileReader{
-		fileName: "../../demo/config.json",
+		FileName: "../../demo/config.json",
 	}
 	return c.JSON(http.StatusOK, reader.ReadConfig())
 }
@@ -69,11 +69,11 @@ func updateConfig(c echo.Context) (err error) {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	cw := new(ConfigWriter)
-	cw.fileName = "../../demo/config.json"
-	err = cw.Write(cfg)
+	fw := new(FileWriter)
+	fw.FileName = "../../demo/config.json"
+	err = fw.WriteJSON(cfg)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	return c.JSON(http.StatusOK, cw)
+	return c.JSON(http.StatusOK, fw)
 }
