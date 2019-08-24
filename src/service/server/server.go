@@ -1,9 +1,12 @@
-package main
+package server
 
 import (
 	"log"
 	"net/http"
 
+	"github.com/hanbaowang/LogViewer/src/service/crawler"
+	"github.com/hanbaowang/LogViewer/src/service/io"
+	"github.com/hanbaowang/LogViewer/src/service/model"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -24,7 +27,7 @@ func Serve() {
 }
 
 func getLog(c echo.Context) (err error) {
-	req := new(LogRequest)
+	req := new(model.LogRequest)
 	err = c.Bind(req)
 	if err != nil {
 		log.Print(err)
@@ -35,8 +38,8 @@ func getLog(c echo.Context) (err error) {
 	if req.Log != "" {
 		fileName += req.Log
 	}
-	reader := &FileReader{
-		fileName: fileName,
+	reader := &io.FileReader{
+		FileName: fileName,
 	}
 
 	rs := reader.ReadLog()
@@ -44,24 +47,34 @@ func getLog(c echo.Context) (err error) {
 }
 
 func getServices(c echo.Context) (err error) {
-	reader := &FileReader{
-		fileName: "../../demo/service.json",
+	reader := &io.FileReader{
+		FileName: "../../demo/services.json",
 	}
 
-	services := reader.ReadServices()
+	services, err := reader.ReadServices()
+	if services == nil {
+		fr := &io.FileReader{
+			FileName: "../../demo/servers.json",
+		}
+		servers, err := fr.ReadServer()
+		if err != nil {
+			log.Print("ReadServer err, ", err)
+		}
+		services = crawler.CrawlServices(servers)
+	}
 
 	return c.JSON(http.StatusOK, services)
 }
 
 func getConfig(c echo.Context) (err error) {
-	reader := &FileReader{
-		fileName: "../../demo/config.json",
+	reader := &io.FileReader{
+		FileName: "../../demo/config.json",
 	}
 	return c.JSON(http.StatusOK, reader.ReadConfig())
 }
 
 func updateConfig(c echo.Context) (err error) {
-	cfg := new(Config)
+	cfg := new(model.Config)
 	err = c.Bind(cfg)
 
 	if err != nil {
@@ -69,11 +82,12 @@ func updateConfig(c echo.Context) (err error) {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	cw := new(ConfigWriter)
-	cw.fileName = "config.json"
-	err = cw.Write(cfg)
+	fw := &io.FileWriter{
+		FileName: "../../demo/config.json",
+	}
+	err = fw.WriteJSON(cfg)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	return c.JSON(http.StatusOK, cw)
+	return c.JSON(http.StatusOK, fw)
 }

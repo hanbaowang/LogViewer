@@ -1,4 +1,4 @@
-package main
+package model
 
 // LogRequest Log Request
 type LogRequest struct {
@@ -21,14 +21,30 @@ type Record struct {
 	Content   string `json:"content"`
 }
 
-// LogInfo log info
-type LogInfo struct {
+// File log info
+type File struct {
 	Name string `json:"log_name"`
 	Path string `json:"log_path"`
 }
 
 // Service service info
 type Service struct {
-	Name string    `json:"name"`
-	Logs []LogInfo `json:"logs"`
+	Name  string `json:"name"`
+	Files []File `json:"logs"`
+}
+
+// Servers server config
+type Servers struct {
+	Servers []Server `json:"servers"`
+	Base    string   `json:"base"`
+}
+
+// Server server info
+type Server struct {
+	IP       string `json:"ip"`
+	Port     string `json:"port"`
+	User     string `json:"user"`
+	Password string `json:"password"`
+	Role     string `json:"role"`
+	Active   bool   `json:"active"`
 }

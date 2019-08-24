@@ -1,0 +1,18 @@
+{
+    "servers": [
+        {
+            "ip": "192.168.1.1",
+            "user": "root",
+            "port": "22",
+            "password": "test123",
+            "active": true
+        }, {
+            "ip": "192.168.1.2",
+            "user": "root",
+            "port": "22",
+            "password": "test321",
+            "active": true
+        }
+    ], 
+    "base": "/var/log/"
+}

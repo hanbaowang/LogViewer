@@ -1,4 +1,4 @@
-package main
+package io
 
 import (
 	"encoding/json"
@@ -11,20 +11,21 @@ type LogWriter interface {
 	Write()
 }
 
-// ConfigWriter File Writer
-type ConfigWriter struct {
-	fileName string
+// FileWriter File Writer
+type FileWriter struct {
+	FileName string
 }
 
-func (cw *ConfigWriter) Write(cfg *Config) (err error) {
+// WriteJSON Write Config
+func (fw *FileWriter) WriteJSON(v interface{}) (err error) {
 
-	configByte, err := json.Marshal(cfg)
+	vBytes, err := json.Marshal(v)
 	if err != nil {
 		log.Fatal("config marshal failed, ", err)
 		return err
 	}
 
-	err = ioutil.WriteFile(cw.fileName, configByte, 0644)
+	err = ioutil.WriteFile(fw.FileName, vBytes, 0644)
 	if err != nil {
 		log.Fatal("write file failed, ", err)
 		return err
