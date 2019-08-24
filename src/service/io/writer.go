@@ -1,4 +1,4 @@
-package server
+package io
 
 import (
 	"encoding/json"

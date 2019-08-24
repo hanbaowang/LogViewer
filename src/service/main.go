@@ -6,9 +6,6 @@ import (
 )
 
 func main() {
-	fr := &server.FileReader{
-		FileName: "../../demo/server.json",
-	}
-	crawler.Run(fr.ReadServer())
+	crawler.Run()
 	server.Serve()
 }

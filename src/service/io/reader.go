@@ -1,4 +1,4 @@
-package server
+package io
 
 import (
 	"bufio"
@@ -9,26 +9,28 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/hanbaowang/LogViewer/src/service/model"
 )
 
 // LogReader Log Reader
 type LogReader interface {
-	ReadLog() []*Record
+	ReadLog() []*model.Record
 }
 
 // ConfigReader Config Reader
 type ConfigReader interface {
-	ReadConfig() *Config
+	ReadConfig() *model.Config
 }
 
 // ServiceReader Service Reader
 type ServiceReader interface {
-	ReadService() []*Service
+	ReadService() []*model.Service
 }
 
 // SrvReader Server Reader
 type SrvReader interface {
-	ReadServer() []*Server
+	ReadServer() []*model.Server
 }
 
 // FileReader File Reader
@@ -37,7 +39,7 @@ type FileReader struct {
 }
 
 // ReadLog Read Log
-func (fr *FileReader) ReadLog() (records []*Record) {
+func (fr *FileReader) ReadLog() (records []*model.Record) {
 
 	f, _ := os.Open(fr.FileName)
 	defer f.Close()
@@ -54,13 +56,13 @@ func (fr *FileReader) ReadLog() (records []*Record) {
 }
 
 // ReadConfig Read Config
-func (fr *FileReader) ReadConfig() *Config {
+func (fr *FileReader) ReadConfig() *model.Config {
 	configByte, err := ioutil.ReadFile(fr.FileName)
 	if err != nil {
 		log.Print(err)
 	}
 
-	config := new(Config)
+	config := new(model.Config)
 	json.Unmarshal(configByte, config)
 	if err != nil {
 		log.Print("Unmarshal config err, ", err)
@@ -70,35 +72,36 @@ func (fr *FileReader) ReadConfig() *Config {
 }
 
 // ReadServices Read Services
-func (fr *FileReader) ReadServices() []*Service {
+func (fr *FileReader) ReadServices() (services []*model.Service, err error) {
 	serviceByte, err := ioutil.ReadFile(fr.FileName)
 	if err != nil {
 		log.Print(err)
+		return nil, err
 	}
 
-	var services []*Service
 	json.Unmarshal(serviceByte, &services)
 	if err != nil {
-		log.Print("Unmarshal config err, ", err)
+		log.Print("Unmarshal services err, ", err)
+		return nil, err
 	}
 
-	return services
+	return services, nil
 }
 
 // ReadServer Read Server
-func (fr *FileReader) ReadServer() Servers {
+func (fr *FileReader) ReadServer() (servers model.Servers, err error) {
 	serviceByte, err := ioutil.ReadFile(fr.FileName)
 	if err != nil {
 		log.Print(err)
+		return servers, err
 	}
 
-	var server Servers
-	json.Unmarshal(serviceByte, &server)
+	json.Unmarshal(serviceByte, &servers)
 	if err != nil {
-		log.Print("Unmarshal config err, ", err)
+		log.Print("Unmarshal server err, ", err)
 	}
 
-	return server
+	return servers, err
 }
 
 func readLine(r *bufio.Reader) (string, error) {
@@ -111,14 +114,14 @@ func readLine(r *bufio.Reader) (string, error) {
 	return string(line), err
 }
 
-func recordify(line string) *Record {
+func recordify(line string) *model.Record {
 	lineSlice := strings.SplitN(line, " ", 4)
 	date, err := time.Parse("2006-01-02 15:04:05", lineSlice[0]+" "+lineSlice[1])
 	if err != nil {
 		log.Print("parse time error, ", err)
 		return nil
 	}
-	return &Record{
+	return &model.Record{
 		Timestamp: strconv.FormatInt(date.Unix()*1000, 10),
 		Level:     lineSlice[2],
 		Content:   strings.Trim(lineSlice[3], " "),

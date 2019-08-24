@@ -1,4 +1,4 @@
-package server
+package model
 
 // LogRequest Log Request
 type LogRequest struct {
@@ -45,5 +45,6 @@ type Server struct {
 	Port     string `json:"port"`
 	User     string `json:"user"`
 	Password string `json:"password"`
+	Role     string `json:"role"`
 	Active   bool   `json:"active"`
 }

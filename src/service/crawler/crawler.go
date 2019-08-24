@@ -3,14 +3,15 @@ package crawler
 import (
 	"log"
 
-	"github.com/hanbaowang/LogViewer/src/service/server"
+	"github.com/hanbaowang/LogViewer/src/service/io"
+	"github.com/hanbaowang/LogViewer/src/service/model"
 	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"
 )
 
 var base string
 
-func getClient(s server.Server) *sftp.Client {
+func getClient(s model.Server) (conn *ssh.Client, client *sftp.Client, err error) {
 	clientConfig := &ssh.ClientConfig{
 		User: s.User,
 		Auth: []ssh.AuthMethod{
@@ -19,45 +20,67 @@ func getClient(s server.Server) *sftp.Client {
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
 
-	conn, err := ssh.Dial("tcp", s.IP+":"+s.Port, clientConfig)
+	conn, err = ssh.Dial("tcp", s.IP+":"+s.Port, clientConfig)
 	if err != nil {
 		log.Print("conn err, ", err)
+		return nil, nil, err
 	}
-	defer conn.Close()
 
-	client, err := sftp.NewClient(conn)
+	client, err = sftp.NewClient(conn)
 	if err != nil {
 		log.Print("sftp err, ", err)
+		return nil, nil, err
 	}
-	defer client.Close()
 
-	return client
+	return conn, client, err
 }
 
 // Run crawler run
-func Run(ss server.Servers) {
+func Run() {
+	fr := &io.FileReader{
+		FileName: "../../demo/servers.json",
+	}
+	ss, err := fr.ReadServer()
+	if err != nil {
+		log.Print("get server err, ", err)
+	}
+
 	base = ss.Base
 	for _, s := range ss.Servers {
-		go func(s server.Server) {
+		go func(s model.Server) {
 			CrawlLogs(s)
 		}(s)
 	}
 }
 
 // CrawlServices crawl services infos and files infos
-func CrawlServices(s server.Server) []*server.Service {
-	client := getClient(s)
-	var services []*server.Service
+func CrawlServices(ss model.Servers) []*model.Service {
+	base = ss.Base
+	var s model.Server
+	for _, v := range ss.Servers {
+		if v.Role == "master" {
+			s = v
+			break
+		}
+	}
+	conn, client, err := getClient(s)
+	if err != nil {
+		log.Fatal("get client err", err)
+	}
+	defer conn.Close()
+	defer client.Close()
+	var services []*model.Service
 
 	serviceInfos, err := client.ReadDir(base)
+
 	if err != nil {
 		log.Print("get service info err, ", err)
 	}
 
 	for _, v := range serviceInfos {
-		var service server.Service
+		var service model.Service
 		service.Name = v.Name()
-		service.Files = getFileFor(v.Name(), client)
+		service.Files = getFileFor(base, v.Name(), client)
 		services = append(services, &service)
 	}
 
@@ -67,23 +90,26 @@ func CrawlServices(s server.Server) []*server.Service {
 }
 
 // CrawlLogs Crawl Logs
-func CrawlLogs(s server.Server) {
+func CrawlLogs(s model.Server) {
 	// client := getClient(s)
 	// client.Open()
 
 }
 
 // get file info
-func getFileFor(aServiceName string, client *sftp.Client) []server.File {
-	var logInfos []server.File
-	logPath := getFilePathBy(aServiceName)
+func getFileFor(base string, aServiceName string, client *sftp.Client) []model.File {
+	var logInfos []model.File
+	logPath := base + getFilePathBy(aServiceName)
 	logs, err := client.ReadDir(logPath)
 	if err != nil {
 		log.Print("get log info err, ", err)
 	}
 
 	for _, log := range logs {
-		var logInfo server.File
+		if log.IsDir() {
+			continue
+		}
+		var logInfo model.File
 		logInfo.Name = log.Name()
 		logInfo.Path = logPath + log.Name()
 		logInfos = append(logInfos, logInfo)
@@ -98,8 +124,8 @@ func getFilePathBy(serviceName string) string {
 }
 
 // save services
-func saveServices(services []*server.Service) error {
-	fw := &server.FileWriter{
+func saveServices(services []*model.Service) error {
+	fw := &io.FileWriter{
 		FileName: "../../demo/services.json",
 	}
 	err := fw.WriteJSON(services)
