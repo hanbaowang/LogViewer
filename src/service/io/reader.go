@@ -42,8 +42,8 @@ type FileReader struct {
 func (fr *FileReader) ReadLog() (records []*model.Record) {
 
 	f, _ := os.Open(fr.FileName)
-	defer f.Close()
 	r := bufio.NewReader(f)
+
 	for {
 		record, err := readLine(r)
 		if err != nil {
@@ -52,6 +52,7 @@ func (fr *FileReader) ReadLog() (records []*model.Record) {
 		records = append(records, recordify(record))
 	}
 
+	f.Close()
 	return records
 }
 
@@ -116,13 +117,14 @@ func readLine(r *bufio.Reader) (string, error) {
 
 func recordify(line string) *model.Record {
 	lineSlice := strings.SplitN(line, " ", 4)
-	date, err := time.Parse("2006-01-02 15:04:05", lineSlice[0]+" "+lineSlice[1])
+	lineSlice[1] = strings.Replace(lineSlice[1], ",", ".", -1)
+	date, err := time.Parse("2006-01-02 15:04:05.000", lineSlice[0]+" "+lineSlice[1])
 	if err != nil {
 		log.Print("parse time error, ", err)
 		return nil
 	}
 	return &model.Record{
-		Timestamp: strconv.FormatInt(date.Unix()*1000, 10),
+		Timestamp: strconv.FormatInt(date.UnixNano()/1000000, 10),
 		Level:     lineSlice[2],
 		Content:   strings.Trim(lineSlice[3], " "),
 	}

@@ -39,10 +39,10 @@ func getLog(c echo.Context) (err error) {
 		})
 	}
 
-	fileName := "../../log" + req.Service
+	fileName := "../../log/" + req.Service
 
 	if req.Logs != "" {
-		fileName = fileName + "/" + req.Logs
+		fileName = fileName + req.Logs
 	}
 	reader := &io.FileReader{
 		FileName: fileName,
