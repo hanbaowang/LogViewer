@@ -2,6 +2,7 @@ package crawler
 
 import (
 	"log"
+	"os"
 
 	"github.com/hanbaowang/LogViewer/src/service/io"
 	"github.com/hanbaowang/LogViewer/src/service/model"
@@ -48,7 +49,16 @@ func Run() {
 	base = ss.Base
 	for _, s := range ss.Servers {
 		go func(s model.Server) {
-			CrawlLogs(s)
+			fr := io.FileReader{
+				FileName: "../../demo/services.json",
+			}
+			svc, err := fr.ReadServices()
+			if err != nil {
+				return
+			}
+			for _, v := range svc {
+				CrawlLogs(s, v)
+			}
 		}(s)
 	}
 }
@@ -78,6 +88,9 @@ func CrawlServices(ss model.Servers) []*model.Service {
 	}
 
 	for _, v := range serviceInfos {
+		if !v.IsDir() {
+			continue
+		}
 		var service model.Service
 		service.Name = v.Name()
 		service.Files = getFileFor(base, v.Name(), client)
@@ -90,16 +103,48 @@ func CrawlServices(ss model.Servers) []*model.Service {
 }
 
 // CrawlLogs Crawl Logs
-func CrawlLogs(s model.Server) {
-	// client := getClient(s)
-	// client.Open()
+func CrawlLogs(s model.Server, svc *model.Service) {
+	for _, v := range svc.Files {
+		go crawlLog(s, v, svc.Name)
+	}
+}
 
+func crawlLog(s model.Server, file model.File, serviceName string) (err error) {
+	conn, client, err := getClient(s)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+	defer client.Close()
+
+	srcFile, err := client.Open(file.Path)
+	if err != nil {
+		log.Fatal("crawl file err, ", "file name is", file.Name, "error is, ", err)
+		return err
+	}
+
+	defer srcFile.Close()
+
+	os.Chdir("../../log")
+
+	dstFile, err := os.OpenFile(serviceName+file.Name, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatal("open file err", err)
+		return err
+	}
+	defer dstFile.Close()
+
+	_, err = srcFile.WriteTo(dstFile)
+
+	os.Chdir("../src/service")
+
+	return err
 }
 
 // get file info
 func getFileFor(base string, aServiceName string, client *sftp.Client) []model.File {
 	var logInfos []model.File
-	logPath := base + getFilePathBy(aServiceName)
+	logPath := base + getFilePathBy(aServiceName) + "/"
 	logs, err := client.ReadDir(logPath)
 	if err != nil {
 		log.Print("get log info err, ", err)

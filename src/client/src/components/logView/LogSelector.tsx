@@ -10,13 +10,16 @@ function trans2CascaderOptions(serviceRsps: Service[]): CascaderOptionType[] {
     service.value = serviceRsp.name;
     service.label = serviceRsp.name;
     service.children = [];
-    for (let log of serviceRsp.logs) {
-      service.children.push({
-        value: log.log_name,
-        label: log.log_path
-      });
+    if (serviceRsp.logs) {
+      for (let log of serviceRsp.logs) {
+        service.children.push({
+          value: log.log_name,
+          label: log.log_path
+        });
+      }
+      options.push(service);
     }
-    options.push(service);
+    
   });
 
   return options;

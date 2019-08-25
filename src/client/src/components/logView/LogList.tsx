@@ -6,6 +6,9 @@ import { LogListProps, LogData, LogLevel } from "../../type/Log";
 
 export default function LogList(props: LogListProps) {
   const { keyword = "", timeRange = {}, level = LogLevel.ALL, data } = props;
+  if(!data) {
+    return <Table dataSource={[]} columns={logListColumns} size="middle" />
+  }
   const lines = [];
   for (let i = 0; i < data.length; i++) {
     const lineData: LogData = data[i];

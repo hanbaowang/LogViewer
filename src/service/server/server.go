@@ -18,7 +18,8 @@ func Serve() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	e.GET("/log", getLog)
+	e.Static("/", "../client/build")
+	e.GET("/logs", getLog)
 	e.GET("/services", getServices)
 	e.GET("/config", getConfig)
 	e.POST("/config", updateConfig)
@@ -31,19 +32,29 @@ func getLog(c echo.Context) (err error) {
 	err = c.Bind(req)
 	if err != nil {
 		log.Print(err)
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, &model.Response{
+			ErrorCode: 1,
+			ErrorMsg:  err.Error(),
+			Data:      "",
+		})
 	}
 
-	fileName := req.Service
-	if req.Log != "" {
-		fileName += req.Log
+	fileName := "../../log" + req.Service
+
+	if req.Logs != "" {
+		fileName = fileName + "/" + req.Logs
 	}
 	reader := &io.FileReader{
 		FileName: fileName,
 	}
 
 	rs := reader.ReadLog()
-	return c.JSON(http.StatusOK, rs)
+	response := &model.Response{
+		ErrorCode: 0,
+		ErrorMsg:  "",
+		Data:      rs,
+	}
+	return c.JSON(http.StatusOK, response)
 }
 
 func getServices(c echo.Context) (err error) {
@@ -63,14 +74,24 @@ func getServices(c echo.Context) (err error) {
 		services = crawler.CrawlServices(servers)
 	}
 
-	return c.JSON(http.StatusOK, services)
+	response := &model.Response{
+		ErrorCode: 0,
+		ErrorMsg:  "",
+		Data:      services,
+	}
+	return c.JSON(http.StatusOK, response)
 }
 
 func getConfig(c echo.Context) (err error) {
 	reader := &io.FileReader{
 		FileName: "../../demo/config.json",
 	}
-	return c.JSON(http.StatusOK, reader.ReadConfig())
+	response := &model.Response{
+		ErrorCode: 0,
+		ErrorMsg:  "",
+		Data:      reader.ReadConfig(),
+	}
+	return c.JSON(http.StatusOK, response)
 }
 
 func updateConfig(c echo.Context) (err error) {
@@ -79,7 +100,11 @@ func updateConfig(c echo.Context) (err error) {
 
 	if err != nil {
 		log.Print("config params err, ", err)
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, &model.Response{
+			ErrorCode: 1,
+			ErrorMsg:  err.Error(),
+			Data:      "",
+		})
 	}
 
 	fw := &io.FileWriter{
@@ -87,7 +112,11 @@ func updateConfig(c echo.Context) (err error) {
 	}
 	err = fw.WriteJSON(cfg)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, &model.Response{
+			ErrorCode: 1,
+			ErrorMsg:  err.Error(),
+			Data:      "",
+		})
 	}
 	return c.JSON(http.StatusOK, fw)
 }

@@ -1,4 +1,4 @@
 export const URLS = {
-  SERVICES: "services",
-  LOGDATA: "logs"
+  SERVICES: "/services",
+  LOGDATA: "/logs"
 };

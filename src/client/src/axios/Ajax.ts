@@ -4,7 +4,7 @@ import Axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 export interface RestResponse<T> {
   data: T;
   error_code: number;
-  error_message: string;
+  error_msg: string;
 }
 
 // 基本 Ajax 格式
@@ -36,7 +36,7 @@ function request<T>(config: AxiosRequestConfig): Promise<RestResponse<T>> {
         if (_data.error_code === 0) {
           resolve(_data);
         } else {
-          console.log(_data.error_message);
+          console.log(_data.error_msg);
           reject(_data);
         }
       })

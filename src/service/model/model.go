@@ -3,10 +3,17 @@ package model
 // LogRequest Log Request
 type LogRequest struct {
 	Service   string `json:"service"`
-	Log       string `json:"log"`
+	Logs      string `json:"logs"`
 	StartTime string `json:"start_time"`
 	EndTime   string `json:"end_time"`
 	Contain   string `json:"contain"`
+}
+
+// Response Response
+type Response struct {
+	ErrorCode int         `json:"error_code"`
+	ErrorMsg  string      `json:"error_msg"`
+	Data      interface{} `json:"data"`
 }
 
 // Config Config
