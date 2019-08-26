@@ -1,12 +1,13 @@
 export enum LogLevel {
-  ALL = "ALL",
-  TRACE = "TRACE",
-  DEBUG = "DEBUG",
-  INFO = "INFO",
-  WARN = "WARN",
-  ERROR = "ERROR",
-  FATAL = "FATAL"
+  ALL = 'ALL',
+  TRACE = 'TRACE',
+  DEBUG = 'DEBUG',
+  INFO = 'INFO',
+  WARN = 'WARN',
+  ERROR = 'ERROR',
+  FATAL = 'FATAL'
 }
+
 export interface Service {
   name: string;
   logs: ServiceLog[];
@@ -34,11 +35,4 @@ export interface LogsReqParams {
 export interface TimeRange {
   startTime?: string;
   endTime?: string;
-}
-
-export interface LogListProps {
-  keyword: string;
-  timeRange: TimeRange;
-  level: string;
-  data: LogData[];
 }

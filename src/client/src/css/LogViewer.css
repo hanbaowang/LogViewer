@@ -1,0 +1,44 @@
+.margin-around {
+  margin: 20px 24px;
+}
+
+.padding-around {
+  padding: 10px 0 0 0;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-column-item {
+  padding-bottom: 10px;
+}
+
+.flex-row {
+  display: flex;
+  align-items: center;
+}
+
+.flex-item_grow {
+  flex: 1 1 auto;
+}
+
+.inline-full-width {
+  width: 100%;
+}
+
+.logViewer-logSelector {
+  white-space: nowrap;
+  font-weight: bold;
+}
+
+.logViewer-settings {
+  font-size: 30px;
+  margin: 0 30px;
+  align-self: center;
+}
+
+.orangeredBorder {
+  border: solid 2px orangered;
+}

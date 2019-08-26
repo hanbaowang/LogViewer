@@ -2,6 +2,7 @@ import React from "react";
 import { Cascader } from "antd";
 import { Service } from "../../type/Log";
 import { CascaderOptionType } from "antd/lib/cascader";
+import { isundefined } from "../../utils/Common";
 
 function trans2CascaderOptions(serviceRsps: Service[]): CascaderOptionType[] {
   const options: CascaderOptionType[] = [];
@@ -19,31 +20,42 @@ function trans2CascaderOptions(serviceRsps: Service[]): CascaderOptionType[] {
       }
       options.push(service);
     }
-    
   });
 
   return options;
 }
 
+function getDefaultValue(defaultValue: string, options: CascaderOptionType[]): string[] | undefined {
+  if (!isundefined(defaultValue)) return [defaultValue];
+
+  if (options.length === 0) return undefined
+
+  return undefined
+}
+
 export default function LogSelector(props: any) {
+  // TODO 这里应该转换好了传进来
   const serviceOptions = trans2CascaderOptions(props.config);
+  const { first } = props;
+  const firstLoadClass = first || isundefined(props.defaultValue) || props.defaultValue === "" ? "" : ""
+
+  let defaultValue: string[] | undefined = getDefaultValue(props.defaultValue, serviceOptions);
+
 
   return (
-    <div
-      style={{
-        padding: "10px 24px",
-        whiteSpace: "nowrap",
-        fontWeight: "bold"
-      }}
-    >
+
+    <div className="flex-row logViewer-logSelector">
       <span>日志配置：&nbsp;&nbsp;</span>
       <Cascader
+        allowClear={false}
         size="default"
+        defaultValue={defaultValue}
         options={serviceOptions}
         onChange={props.onChange}
         placeholder="请选择日志..."
         showSearch={true}
-        style={{ width: "500px" }}
+        displayRender={label => label.join(" > ")}
+        className={`inline-full-width ${firstLoadClass}`}
       />
     </div>
   );

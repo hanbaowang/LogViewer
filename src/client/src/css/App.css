@@ -3,6 +3,18 @@
 .App {
   text-align: center;
 }
+  
+.contentView {
+  height: calc(100vh - 3.5rem);
+  background-color: white;
+}
+
+.footerView {
+  height: 3.5rem;
+  vertical-align: middle;
+  color: rgb(172, 172, 172);
+  background-color: white;
+}
 
 .ant-table-middle
   > .ant-table-content
