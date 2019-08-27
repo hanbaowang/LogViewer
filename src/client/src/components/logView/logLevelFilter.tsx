@@ -4,14 +4,8 @@ import { LogLevel } from "../../type/Log";
 
 export default function LogLevelFilter(props: any) {
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        marginTop: "10px"
-      }}
-    >
-      <Button type="primary" style={{ marginRight: "5px" }}>
+    <div className="search">
+      <Button type="primary" style={{ marginRight: "10px" }}>
         日志级别
       </Button>
       <Radio.Group
